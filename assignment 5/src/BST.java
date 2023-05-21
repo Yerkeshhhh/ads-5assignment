@@ -1,7 +1,8 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class BST<K extends Comparable<K>, V> {
+public class BST<K extends Comparable<K>, V> implements Iterable<BST.NodeEntry<K, V>> {
     private Node root;
 
     private class Node {
@@ -94,18 +95,39 @@ public class BST<K extends Comparable<K>, V> {
         return node;
     }
 
-    public Iterable<K> iterator() {
-        List<K> keys = new ArrayList<>();
-        inorderTraversal(root, keys);
-        return keys;
+    public Iterator<NodeEntry<K, V>> iterator() {
+        List<NodeEntry<K, V>> entries = new ArrayList<>();
+        inorderTraversal(root, entries);
+        return entries.iterator();
     }
 
-    private void inorderTraversal(Node node, List<K> keys) {
+    private void inorderTraversal(Node node, List<NodeEntry<K, V>> entries) {
         if (node != null) {
-            inorderTraversal(node.left, keys);
-            keys.add(node.key);
-            inorderTraversal(node.right, keys);
+            inorderTraversal(node.left, entries);
+            entries.add(new NodeEntry<>(node.key, node.val));
+            inorderTraversal(node.right, entries);
         }
     }
 
+    public int size() {
+        return size(root);
+    }
+
+    private int size(Node node) {
+        if (node == null) {
+            return 0;
+        } else {
+            return 1 + size(node.left) + size(node.right);
+        }
+    }
+
+    public static class NodeEntry<K, V> {
+        public K key;
+        public V value;
+
+        public NodeEntry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
 }
